@@ -12,7 +12,7 @@ public class NoDefaultConstructorClass {
   }
 
   @Record
-  static class MyStaticNestedClass {
+  public static class MyStaticNestedClass {
 
     private String stringData;
 
@@ -27,7 +27,7 @@ public class NoDefaultConstructorClass {
   }
 
   @Record
-  class MyInnerClass {
+  public class MyInnerClass {
 
     private String stringData;
 

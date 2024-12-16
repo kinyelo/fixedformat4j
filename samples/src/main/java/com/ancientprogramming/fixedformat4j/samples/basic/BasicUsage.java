@@ -31,6 +31,7 @@ public class BasicUsage {
 
   public static void main(String[] args) {
     String string = "string    001232008-05-29";
+    System.out.println("Original: " + string);
     BasicRecord record = manager.load(BasicRecord.class, string);
 
     System.out.println("The parsed string: " + record.getStringData());

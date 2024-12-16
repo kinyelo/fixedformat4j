@@ -17,6 +17,7 @@ package com.ancientprogramming.fixedformat4j.format;
 
 import com.ancientprogramming.fixedformat4j.exception.FixedFormatException;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -31,6 +32,7 @@ public class ParseException extends FixedFormatException {
   private String failedText;
   private Class annotatedClass;
   private Method annotatedMethod;
+  private Field annotatedField;
   private FormatContext formatContext;
   private FormatInstructions formatInstructions;
 
@@ -50,6 +52,16 @@ public class ParseException extends FixedFormatException {
     this.failedText = failedText;
     this.annotatedClass = annotatedClass;
     this.annotatedMethod = annotatedMethod;
+    this.formatContext = formatContext;
+    this.formatInstructions = formatInstructions;
+  }
+
+  public ParseException(String completeText, String failedText, Class annotatedClass, Field annotatedField, FormatContext formatContext, FormatInstructions formatInstructions, Throwable cause) {
+    super("Failed to parse '" + failedText + "' at offset " + formatContext.getOffset() + " as " + formatContext.getDataType().getName() + " from '" + completeText + "'. Got format instructions from " + annotatedClass.getName() + "." + annotatedField.getName() + ". See details{" + formatContext + ", " +formatInstructions.toString() + "}", cause);
+    this.completeText = completeText;
+    this.failedText = failedText;
+    this.annotatedClass = annotatedClass;
+    this.annotatedField = annotatedField;
     this.formatContext = formatContext;
     this.formatInstructions = formatInstructions;
   }

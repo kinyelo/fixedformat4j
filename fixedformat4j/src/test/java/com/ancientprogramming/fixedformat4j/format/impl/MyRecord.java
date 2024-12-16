@@ -16,6 +16,7 @@
 package com.ancientprogramming.fixedformat4j.format.impl;
 
 import com.ancientprogramming.fixedformat4j.annotation.*;
+import com.ancientprogramming.fixedformat4j.annotation.Record;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -135,7 +136,7 @@ public class MyRecord {
 
 
   @Record
-  static class MyStaticNestedClass {
+  public static class MyStaticNestedClass {
 
     private String stringData;
 
@@ -150,7 +151,7 @@ public class MyRecord {
   }
 
   @Record
-  class MyInnerClass {
+  public class MyInnerClass {
 
     private String stringData;
 
