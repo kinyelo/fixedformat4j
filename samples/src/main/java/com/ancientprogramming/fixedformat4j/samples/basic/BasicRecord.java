@@ -19,6 +19,7 @@ import com.ancientprogramming.fixedformat4j.annotation.Record;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
 import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.FixedFormatPattern;
+import com.ancientprogramming.fixedformat4j.format.EnumLookup;
 import lombok.Data;
 
 import java.util.Date;
@@ -34,6 +35,31 @@ import java.util.Date;
 @Data
 public class BasicRecord {
 
+  public enum Type {
+    ONE, TWO
+  }
+
+  public enum ComplexType implements EnumLookup {
+
+    ALPHA("1236", "Alpha type"),
+    BETA("456", "Beta type");
+
+    private String code, label;
+
+    ComplexType(String code, String label) {
+      this.code = code;
+      this.label = label;
+    }
+
+    public String getLabel() {
+      return label;
+    }
+    @Override
+    public String getCode() {
+      return code;
+    }
+  }
+
   @Field(offset = 1, length = 10)
   private String stringData;
 
@@ -43,6 +69,12 @@ public class BasicRecord {
   @Field(offset = 16, length = 10)
   @FixedFormatPattern("yyyy-MM-dd")
   private Date dateData;
+
+  @Field(offset = 26, length = 3)
+  private Type type;
+
+  @Field(offset = 29, length = 4)
+  private ComplexType complexType;
 
 }
 //END-SNIPPET: basicrecord

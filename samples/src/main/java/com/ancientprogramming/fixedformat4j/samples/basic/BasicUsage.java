@@ -16,6 +16,7 @@
 package com.ancientprogramming.fixedformat4j.samples.basic;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
+import com.ancientprogramming.fixedformat4j.format.impl.ByTypeFormatter;
 import com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl;
 
 /**
@@ -30,7 +31,10 @@ public class BasicUsage {
   private static FixedFormatManager manager = new FixedFormatManagerImpl();
 
   public static void main(String[] args) {
-    String string = "string    001232008-05-29";
+    ByTypeFormatter.registerEnum(BasicRecord.Type.class);
+    ByTypeFormatter.registerEnum(BasicRecord.ComplexType.class);
+
+    String string = "string    001232008-05-29TWO1236";
     System.out.println("Original: " + string);
     BasicRecord record = manager.load(BasicRecord.class, string);
 
@@ -39,6 +43,8 @@ public class BasicUsage {
     System.out.println("The parsed date: " + record.getDateData());
 
     record.setIntegerData(100);
+    record.setType(BasicRecord.Type.ONE);
+    record.setComplexType(BasicRecord.ComplexType.BETA);
     System.out.println("Exported: " + manager.export(record));
   }
 }

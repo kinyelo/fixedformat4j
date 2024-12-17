@@ -30,20 +30,20 @@ import java.lang.annotation.RetentionPolicy;
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
 public @interface Field {
 
   /**
    * A one based offset to insert data at in a record.
    * @return the offset as an int
    */
-  int offset();
+  int offset() default 1;
 
   /**
    * The length of the formatted field
    * @return the length as an int
    */
-  int length();
+  int length() default 0;
 
   /**
    * @return The direction of the padding. Defaults to {@link Align#RIGHT}.

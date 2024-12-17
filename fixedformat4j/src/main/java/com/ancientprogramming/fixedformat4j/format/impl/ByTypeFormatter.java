@@ -23,6 +23,7 @@ import com.ancientprogramming.fixedformat4j.format.FormatInstructions;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,26 +39,34 @@ import java.util.Map;
 public class ByTypeFormatter implements FixedFormatter<Object> {
   private FormatContext context;
 
-  private static final Map<Class<? extends Serializable>, Class<? extends FixedFormatter>> KNOWN_FORMATTERS = new HashMap<Class<? extends Serializable>, Class<? extends FixedFormatter>>();
+  private static final Map<Class<?>, FixedFormatter> KNOWN_FORMATTERS = new HashMap<>();
 
   static {
-    KNOWN_FORMATTERS.put(String.class, StringFormatter.class);
-    KNOWN_FORMATTERS.put(short.class, ShortFormatter.class);
-    KNOWN_FORMATTERS.put(Short.class, ShortFormatter.class);
-    KNOWN_FORMATTERS.put(int.class, IntegerFormatter.class);
-    KNOWN_FORMATTERS.put(Integer.class, IntegerFormatter.class);
-    KNOWN_FORMATTERS.put(long.class, LongFormatter.class);
-    KNOWN_FORMATTERS.put(Long.class, LongFormatter.class);
-    KNOWN_FORMATTERS.put(Date.class, DateFormatter.class);
-    KNOWN_FORMATTERS.put(char.class, CharacterFormatter.class);
-    KNOWN_FORMATTERS.put(Character.class, CharacterFormatter.class);
-    KNOWN_FORMATTERS.put(boolean.class, BooleanFormatter.class);
-    KNOWN_FORMATTERS.put(Boolean.class, BooleanFormatter.class);
-    KNOWN_FORMATTERS.put(double.class, DoubleFormatter.class);
-    KNOWN_FORMATTERS.put(Double.class, DoubleFormatter.class);
-    KNOWN_FORMATTERS.put(float.class, FloatFormatter.class);
-    KNOWN_FORMATTERS.put(Float.class, FloatFormatter.class);
-    KNOWN_FORMATTERS.put(BigDecimal.class,  BigDecimalFormatter.class);
+    KNOWN_FORMATTERS.put(String.class, new StringFormatter());
+    KNOWN_FORMATTERS.put(short.class, new ShortFormatter());
+    KNOWN_FORMATTERS.put(Short.class, new ShortFormatter());
+    KNOWN_FORMATTERS.put(int.class, new IntegerFormatter());
+    KNOWN_FORMATTERS.put(Integer.class, new IntegerFormatter());
+    KNOWN_FORMATTERS.put(long.class, new LongFormatter());
+    KNOWN_FORMATTERS.put(Long.class, new LongFormatter());
+    KNOWN_FORMATTERS.put(Date.class, new DateFormatter());
+    KNOWN_FORMATTERS.put(char.class, new CharacterFormatter());
+    KNOWN_FORMATTERS.put(Character.class, new CharacterFormatter());
+    KNOWN_FORMATTERS.put(boolean.class, new BooleanFormatter());
+    KNOWN_FORMATTERS.put(Boolean.class, new BooleanFormatter());
+    KNOWN_FORMATTERS.put(double.class, new DoubleFormatter());
+    KNOWN_FORMATTERS.put(Double.class, new DoubleFormatter());
+    KNOWN_FORMATTERS.put(float.class, new FloatFormatter());
+    KNOWN_FORMATTERS.put(Float.class, new FloatFormatter());
+    KNOWN_FORMATTERS.put(BigDecimal.class, new BigDecimalFormatter());
+  }
+
+  public static void register(Class<?> cl, FixedFormatter formatter) {
+    KNOWN_FORMATTERS.put(cl, formatter);
+  }
+
+  public static void registerEnum(Class<?> cl) {
+    KNOWN_FORMATTERS.put(cl, new EnumFormatter(cl));
   }
 
   public ByTypeFormatter(FormatContext context) {
@@ -76,18 +85,9 @@ public class ByTypeFormatter implements FixedFormatter<Object> {
   }
 
   public FixedFormatter actualFormatter(final Class<? extends Object> dataType) {
-    Class<? extends FixedFormatter> formatterClass = KNOWN_FORMATTERS.get(dataType);
-
-    if (formatterClass != null) {
-      try {
-        return formatterClass.getConstructor().newInstance();
-      } catch (NoSuchMethodException e) {
-        throw new FixedFormatException("Could not create instance of[" + formatterClass.getName() + "] because no default constructor exists");
-      } catch (Exception e) {
-        throw new FixedFormatException("Could not create instance of[" + formatterClass.getName() + "]", e);
-      }
-    } else {
-      throw new FixedFormatException(ByTypeFormatter.class.getName() + " cannot handle datatype[" + dataType.getName() + "]. Provide your own custom FixedFormatter for this datatype.");
+    if (!KNOWN_FORMATTERS.containsKey(dataType)) {
+      throw new FixedFormatException("Could not find formatter for " + dataType.getName());
     }
+    return KNOWN_FORMATTERS.get(dataType);
   }
 }
